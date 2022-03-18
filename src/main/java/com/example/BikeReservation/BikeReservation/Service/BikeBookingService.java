@@ -18,6 +18,9 @@ public class BikeBookingService {
     CustomerInfoRepository customerInfoRepository;
 
     @Autowired
+    EmailAlertService emailAlertService;
+
+    @Autowired
     PaymentInfoRepository paymentInfoRepository;
 
     @Transactional
@@ -30,6 +33,7 @@ public class BikeBookingService {
         paymentInfo.setAmount(customerInfo.getFare());
         paymentInfoRepository.save(paymentInfo);
 
+        emailAlertService.sendNotification(customerInfo.getName(),customerInfo.getFare(),customerInfo.getEmail());
         return new BikeBookingAcknowledgement("Success",paymentInfo.getAmount(),customerInfo);
     }
 }
