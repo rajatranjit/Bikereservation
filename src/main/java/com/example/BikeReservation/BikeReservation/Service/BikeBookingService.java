@@ -23,12 +23,17 @@ public class BikeBookingService {
     @Autowired
     PaymentInfoRepository paymentInfoRepository;
 
+    @Autowired
+    AddAccountService addAccountService;
+
     @Transactional
     public BikeBookingAcknowledgement bikeBooking(BikeReservationRequest request){
         CustomerInfo customerInfo = request.getCustomerInfo();
         customerInfoRepository.save(customerInfo);
         PaymentInfo paymentInfo = request.getPaymentInfo();
-        PaymentUtil.checkCreditLimit(paymentInfo.getAccountNo(), customerInfo.getFare());
+        if (!addAccountService.balanceLimitCheck(customerInfo.getEmail(), customerInfo.getFare())){
+            return new BikeBookingAcknowledgement("Failed, Insufficient Balance!!!",paymentInfo.getAmount(),customerInfo);
+        }
         paymentInfo.setPassengerId(customerInfo.getPId());
         paymentInfo.setAmount(customerInfo.getFare());
         paymentInfoRepository.save(paymentInfo);
