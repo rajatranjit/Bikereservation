@@ -1,9 +1,11 @@
 package com.example.BikeReservation.BikeReservation.Service;
 
 import com.example.BikeReservation.BikeReservation.Entity.AddAccount;
+import com.example.BikeReservation.BikeReservation.Entity.CustomerBookingDetail;
 import com.example.BikeReservation.BikeReservation.Entity.CustomerInfo;
 import com.example.BikeReservation.BikeReservation.Entity.PaymentInfo;
 import com.example.BikeReservation.BikeReservation.Repository.AddAccountRepo;
+import com.example.BikeReservation.BikeReservation.Repository.CustomerBookingDetailRepo;
 import com.example.BikeReservation.BikeReservation.Repository.CustomerInfoRepository;
 import com.example.BikeReservation.BikeReservation.Repository.PaymentInfoRepository;
 import com.example.BikeReservation.BikeReservation.Util.PaymentUtil;
@@ -32,6 +34,9 @@ public class BikeBookingService {
     @Autowired
     AddAccountRepo addAccountRepo;
 
+    @Autowired
+    CustomerBookingDetailRepo customerBookingDetailRepo;
+
     @Transactional
     public BikeBookingAcknowledgement bikeBooking(BikeReservationRequest request){
         CustomerInfo customerInfo = request.getCustomerInfo();
@@ -48,7 +53,19 @@ public class BikeBookingService {
         paymentInfo.setPassengerId(customerInfo.getPId());
         paymentInfo.setAmount(customerInfo.getFare());
         paymentInfoRepository.save(paymentInfo);
-
+        CustomerBookingDetail customerBookingDetail = new CustomerBookingDetail();
+        double balance;
+        try {
+            customerBookingDetail = customerBookingDetailRepo.findById(customerInfo.getEmail()).get();
+            balance = customerBookingDetail.getEarned();
+            balance += customerInfo.getFare();
+            customerBookingDetail.setEarned(balance);
+        } catch (Exception e){
+            customerBookingDetail.setEarned(customerInfo.getFare());
+        }
+        customerBookingDetail.setEmail(customerInfo.getEmail());
+        customerBookingDetail.setName(customerInfo.getName());
+        customerBookingDetailRepo.save(customerBookingDetail);
         emailAlertService.sendNotification(customerInfo.getName(),customerInfo.getFare(),customerInfo.getEmail());
         return new BikeBookingAcknowledgement("Success",paymentInfo.getAmount(),customerInfo);
     }
