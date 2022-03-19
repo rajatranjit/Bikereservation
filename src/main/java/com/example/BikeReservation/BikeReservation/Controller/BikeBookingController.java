@@ -22,6 +22,7 @@ public class BikeBookingController {
     }
     @PostMapping("/bikeBookingSystem/addCustomer/")
     public String addAccount(@RequestBody AddAccountRequest addAccountRequest){
+        System.out.println("Printing request: "+addAccountRequest);
         return addAccountService.addAccount(addAccountRequest);
     }
     @GetMapping("/bikeBookingSystem/getBalance/{email}")
