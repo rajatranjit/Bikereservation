@@ -23,6 +23,6 @@ public class PaymentInfo {
     String accountNo;
     double amount;
     String cardType;
-    long passengerId;
+    String email;
 
 }
