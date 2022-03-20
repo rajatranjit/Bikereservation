@@ -11,6 +11,8 @@ import com.example.BikeReservation.BikeReservation.dto.CustomerAccountAcknowledg
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 public class BikeBookingController {
     @Autowired
@@ -20,7 +22,7 @@ public class BikeBookingController {
     @Autowired
     DeleteAccount deleteAccount;
     @PostMapping("/bikeBookingSystem")
-    public BikeBookingAcknowledgement bikeBook(@RequestBody BikeReservationRequest request){
+    public BikeBookingAcknowledgement bikeBook(@RequestBody BikeReservationRequest request) throws ParseException {
         return bikeBookingService.bikeBooking(request);
     }
     @PostMapping("/bikeBookingSystem/addCustomer/")

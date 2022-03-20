@@ -12,8 +12,8 @@ import java.util.List;
 public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, Long> {
     @Query(value = "SELECT e FROM CUSTOMER_INFO e WHERE e.bikeNumber=?1")
     CustomerInfo getFromBike(long bikeNumber);
-
-    @Query(value = "SELECT pickupTime FROM CUSTOMER_INFO e where e.pickupTime <= ?1")
+//@Query(value = "SELECT pickupTime FROM CUSTOMER_INFO e where e.pickupTime <= ?1")
+    @Query(value = "SELECT pickupTime FROM CUSTOMER_INFO")
     List<Date> getStartDate(Date pickupTime);
 
     @Query(value = "SELECT e FROM CUSTOMER_INFO e where e.pickupTime = ?1 and e.bikeNumber= ?2")
