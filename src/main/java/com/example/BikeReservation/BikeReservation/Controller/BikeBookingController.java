@@ -1,6 +1,6 @@
 package com.example.BikeReservation.BikeReservation.Controller;
 
-import com.example.BikeReservation.BikeReservation.Entity.AddAccount;
+
 import com.example.BikeReservation.BikeReservation.Service.AddAccountService;
 import com.example.BikeReservation.BikeReservation.Service.BikeBookingService;
 import com.example.BikeReservation.BikeReservation.Service.DeleteAccount;
@@ -35,7 +35,7 @@ public class BikeBookingController {
     public CustomerAccountAcknowledgement addBalance(@RequestBody AddAccountRequest addAccountRequest){
         return addAccountService.addBalance(addAccountRequest);
     }
-    @DeleteMapping("/bikeBookingSystem/{email}")
+    @DeleteMapping("/bikeBookingSystem/deleteUser/{email}")
     public String deleteAccount(@PathVariable (name = "email") String email){
         return deleteAccount.deleteAccount(email);
     }
