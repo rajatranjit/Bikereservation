@@ -1,6 +1,5 @@
 package com.example.BikeReservation.BikeReservation.Entity;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,10 +12,10 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "ADD_ACCOUNT")
-public class AddAccount {
+@Table(name = "CUSTOMER_BOOKING_DETAIL")
+public class CustomerBookingDetail {
     @Id
-    @NotNull
-    public String email;
-    public double balance;
+    String email;
+    String name;
+    double earned;
 }
