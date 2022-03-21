@@ -36,12 +36,12 @@ public class EmailAlertService {
                     InternetAddress.parse(email)
             );
             message.setSubject("Congratulation your Bike reservation is Successful!!!");
-            message.setText("Dear "+name+","
-                    + "\n\nThank you for the reservation!"+"Your total fare is : "+fare);
+            message.setText("Dear " + name + ","
+                    + "\n\nThank you for the reservation!" + "Your total fare is : " + fare);
 
             Transport.send(message);
 
-            System.out.println("Done");
+            System.out.println("Email Sent successfully!!!");
 
         } catch (MessagingException e) {
             e.printStackTrace();
