@@ -1,5 +1,6 @@
 package com.example.BikeReservation.BikeReservation.Service;
 
+import com.example.BikeReservation.BikeReservation.Entity.CustomerInfo;
 import org.springframework.stereotype.Service;
 
 
@@ -10,7 +11,7 @@ import java.util.Properties;
 
 @Service
 public class EmailAlertService {
-    public void sendNotification(String name, double fare, String email) {
+    public void sendNotification(CustomerInfo customerInfo, String job) {
         final String username = "bikereservation2274@gmail.com";
         final String password = "aicrcjcbwejhpvgh";
 
@@ -27,17 +28,33 @@ public class EmailAlertService {
                     }
                 });
 
+        String header = "";
+        String body = "";
+        if (job.equals("book")){
+            header = "Congratulation your Bike reservation is Successful!!!";
+            body = "Dear " + customerInfo.getName() + ","
+                    + "\n\nThank you for the reservation!" + "Your total fare is : " + customerInfo.getFare()+".\n" +
+                    "Your bike reservation is from "+customerInfo.getPickupTime()+" to "+customerInfo.getArrivalTime();
+        } else if (job.equals("update")){
+            header = "Congratulation your Bike reservation update is Successful!!!";
+            body = "Dear " + customerInfo.getName() + ","
+                    + "\n\nThank you for the reservation!" + "Your total fare is : " + customerInfo.getFare()+".\n" +
+                    "Your bike reservation is from "+customerInfo.getPickupTime()+" to "+customerInfo.getArrivalTime();
+        } else if (job.equals("cancel")){
+            header = "Your cancellation of you booking is successful!!!";
+            body = "Dear " + customerInfo.getName() + ","
+                    + "\n\nYour cancellation is successful!" + "Your total fare refunded is : " + customerInfo.getFare()+".";
+        }
         try {
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse(email)
+                    InternetAddress.parse(customerInfo.getEmail())
             );
-            message.setSubject("Congratulation your Bike reservation is Successful!!!");
-            message.setText("Dear " + name + ","
-                    + "\n\nThank you for the reservation!" + "Your total fare is : " + fare);
+            message.setSubject(header);
+            message.setText(body);
 
             Transport.send(message);
 

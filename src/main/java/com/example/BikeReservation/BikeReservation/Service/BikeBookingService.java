@@ -46,10 +46,10 @@ public class BikeBookingService {
     @Transactional
     public BikeBookingAcknowledgement bikeBooking(BikeReservationRequest request) throws ParseException {
         CustomerInfo customerInfo = request.getCustomerInfo();
-        if (checkerClass.checkTime(customerInfo.getPickupTime(),customerInfo.getArrivalTime())){
+        if (checkerClass.checkTime(customerInfo.getPickupTime(), customerInfo.getArrivalTime())) {
             return new BikeBookingAcknowledgement("Sorry!! Pick Up time cannot be after drop off.", customerInfo.getFare(), customerInfo);
         }
-        if (checkerClass.checkPickUpAndDropOff(customerInfo)){
+        if (checkerClass.checkPickUpAndDropOff(customerInfo)) {
             return new BikeBookingAcknowledgement("Sorry!! Pick Up time cannot be before current time.", customerInfo.getFare(), customerInfo);
         }
         long bikeNumber = customerInfo.getBikeNumber();
@@ -58,16 +58,16 @@ public class BikeBookingService {
         } catch (Exception e) {
             return new BikeBookingAcknowledgement("Failed, No Account found!!!. Please enter valid email address.", customerInfo.getFare(), customerInfo);
         }
-        if (!checkerClass.bikeList().contains(bikeNumber)){
+        if (!checkerClass.bikeList().contains(bikeNumber)) {
             return new BikeBookingAcknowledgement("Failed, Please enter valid bike number.", customerInfo.getFare(), customerInfo);
         }
         CustomerInfo getOlderBooking = customerInfoRepository.getCustomerByEmail(customerInfo.getEmail());
-        System.out.println("getOlderBooking: "+getOlderBooking);
-        if (getOlderBooking != null){
+        System.out.println("getOlderBooking: " + getOlderBooking);
+        if (getOlderBooking != null) {
             return new BikeBookingAcknowledgement("Booking already Exist. If you want to update booking please go to update.", getOlderBooking.getFare(), getOlderBooking);
         }
         List<Date> startDateList = customerInfoRepository.getStartDate(checkerClass.getSystemDateTime());
-        if (checkerClass.vehicleIsNotAvailable(customerInfo,startDateList,bikeNumber)){
+        if (checkerClass.vehicleIsNotAvailable(customerInfo, startDateList, bikeNumber)) {
             return new BikeBookingAcknowledgement("Sorry!! Vehicle is not available on time you have selected.", customerInfo.getFare(), customerInfo);
         }
         if (!addAccountService.balanceLimitCheck(customerInfo.getEmail(), customerInfo.getFare())) {
@@ -81,10 +81,8 @@ public class BikeBookingService {
         paymentInfo.setEmail(customerInfo.getEmail());
         paymentInfo.setAmount(customerInfo.getFare());
         paymentInfoRepository.save(paymentInfo);
-        balanceAdjustment.addToMerchant(customerInfo.getEmail(), customerInfo.getFare());
-        emailAlertService.sendNotification(customerInfo.getName(), customerInfo.getFare(), customerInfo.getEmail());
+        balanceAdjustment.addToMerchant(customerInfo.getEmail(), customerInfo.getFare(), false);
+        emailAlertService.sendNotification(customerInfo,"book");
         return new BikeBookingAcknowledgement("Success", paymentInfo.getAmount(), customerInfo);
     }
-
-
 }
