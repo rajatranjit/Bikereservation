@@ -22,7 +22,12 @@ public class AddAccountService {
         return "Email already exist";
     }
     public CustomerAccountAcknowledgement getBalance(String email){
-        AddAccount account = addAccountRepo.findById(email).get();
+        AddAccount account = new AddAccount();
+        try {
+            account = addAccountRepo.findById(email).get();
+        }catch (Exception e){
+            return new CustomerAccountAcknowledgement("Username not found!!!",account);
+        }
         return new CustomerAccountAcknowledgement("Success",account);
     }
 

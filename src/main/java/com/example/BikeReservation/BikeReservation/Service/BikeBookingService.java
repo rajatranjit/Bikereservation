@@ -81,8 +81,8 @@ public class BikeBookingService {
         paymentInfo.setEmail(customerInfo.getEmail());
         paymentInfo.setAmount(customerInfo.getFare());
         paymentInfoRepository.save(paymentInfo);
-        balanceAdjustment.addToMerchant(customerInfo.getEmail());
-        //emailAlertService.sendNotification(customerInfo.getName(), customerInfo.getFare(), customerInfo.getEmail());
+        balanceAdjustment.addToMerchant(customerInfo.getEmail(), customerInfo.getFare());
+        emailAlertService.sendNotification(customerInfo.getName(), customerInfo.getFare(), customerInfo.getEmail());
         return new BikeBookingAcknowledgement("Success", paymentInfo.getAmount(), customerInfo);
     }
 

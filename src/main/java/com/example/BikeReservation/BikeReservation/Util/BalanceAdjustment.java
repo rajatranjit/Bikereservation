@@ -26,7 +26,7 @@ public class BalanceAdjustment {
     @Transactional
     public String reduceFromMerchant(String email, boolean refund) {
         String result;
-        AddAccount account;
+        AddAccount account = new AddAccount();
         try {
             account = addAccountRepo.findById(email).get();
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class BalanceAdjustment {
 
 
     @Transactional
-    public String addToMerchant(String email) {
+    public String addToMerchant(String email, double balance) {
         String result;
         AddAccount account = addAccountRepo.findById(email).get();
         if (account == null){
@@ -66,9 +66,23 @@ public class BalanceAdjustment {
             result = "Sorry no booking from given Email Address!!!";
             return result;
         }
-        CustomerBookingDetail customerBookingDetail = customerBookingDetailRepo.findById(email).get();
-        double balanceOnCustomer = account.getBalance() - customerInfo.getFare();
-        double balanceOnMerchant = customerBookingDetail.getEarned() + customerInfo.getFare();
+        CustomerBookingDetail customerBookingDetail = new CustomerBookingDetail();
+        try {
+            customerBookingDetail = customerBookingDetailRepo.findById(email).get();
+        } catch (Exception e){
+            double balanceOnCustomer = account.getBalance() - customerInfo.getFare();
+            double balanceOnMerchant =  customerInfo.getFare();
+            account.setEmail(customerInfo.getEmail());
+            account.setBalance(balanceOnCustomer);
+            customerBookingDetail.setEmail(email);
+            customerBookingDetail.setName(customerInfo.getName());
+            customerBookingDetail.setEarned(balanceOnMerchant);
+            addAccountRepo.save(account);
+            customerBookingDetailRepo.save(customerBookingDetail);
+            return "Success";
+        }
+        double balanceOnCustomer = account.getBalance() - balance;
+        double balanceOnMerchant = customerBookingDetail.getEarned() + balance;
         account.setBalance(balanceOnCustomer);
         customerBookingDetail.setEarned(balanceOnMerchant);
         addAccountRepo.save(account);
