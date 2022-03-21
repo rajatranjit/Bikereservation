@@ -14,8 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class BikeBookingService {
@@ -38,8 +45,20 @@ public class BikeBookingService {
     CustomerBookingDetailRepo customerBookingDetailRepo;
 
     @Transactional
-    public BikeBookingAcknowledgement bikeBooking(BikeReservationRequest request) {
+    public BikeBookingAcknowledgement bikeBooking(BikeReservationRequest request) throws ParseException {
         CustomerInfo customerInfo = request.getCustomerInfo();
+        if (checkTime(customerInfo.getPickupTime(),customerInfo.getArrivalTime())){
+            return new BikeBookingAcknowledgement("Sorry!! Pick Up time cannot be after drop off.", customerInfo.getFare(), customerInfo);
+        }
+        DateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date systemDate = new Date();
+        String systemDateTime = dateFormat.format(systemDate);
+        String customerDateTime = dateFormat.format(customerInfo.getPickupTime());
+        System.out.println(systemDateTime+", "+customerDateTime);
+        if (dateFormat.parse(customerDateTime).before(dateFormat.parse(systemDateTime))){
+            return new BikeBookingAcknowledgement("Sorry!! Pick Up time cannot be before current time.", customerInfo.getFare(), customerInfo);
+        };
+
         long bikeNumber = customerInfo.getBikeNumber();
         try {
             AddAccount addAccount = addAccountRepo.findById(customerInfo.getEmail()).get();
@@ -56,11 +75,11 @@ public class BikeBookingService {
                 }
             }
         }
+        if (!addAccountService.balanceLimitCheck(customerInfo.getEmail(), customerInfo.getFare())) {
+            return new BikeBookingAcknowledgement("Failed, Insufficient Balance!!!", customerInfo.getFare(), customerInfo);
+        }
         customerInfoRepository.save(customerInfo);
         PaymentInfo paymentInfo = request.getPaymentInfo();
-        if (!addAccountService.balanceLimitCheck(customerInfo.getEmail(), customerInfo.getFare())) {
-            return new BikeBookingAcknowledgement("Failed, Insufficient Balance!!!", paymentInfo.getAmount(), customerInfo);
-        }
         paymentInfo.setEmail(customerInfo.getEmail());
         paymentInfo.setAmount(customerInfo.getFare());
         paymentInfoRepository.save(paymentInfo);
@@ -83,5 +102,9 @@ public class BikeBookingService {
 
     public boolean checkTimeClash(CustomerInfo customerInfo, CustomerInfo getCustomer) {
         return getCustomer.getPickupTime().compareTo(customerInfo.getArrivalTime()) <= 0 && getCustomer.getArrivalTime().compareTo(customerInfo.getPickupTime()) >= 0;
+    }
+
+    public boolean checkTime(Date pickUp, Date dropOff) {
+        return pickUp.compareTo(dropOff) >= 0;
     }
 }

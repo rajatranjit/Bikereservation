@@ -1,6 +1,7 @@
 package com.example.BikeReservation.BikeReservation.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,14 +25,15 @@ public class CustomerInfo {
     String email;
     String name;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "PST")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+5:45")
     LocalDate travelDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "PST")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+5:45")
     Date pickupTime;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "PST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+5:45")
     Date arrivalTime;
     double fare;
+    @NotNull
     long bikeNumber;
 }
