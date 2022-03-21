@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +51,14 @@ public class CheckerClass {
             return true;
         }
         return false;
+    }
+
+    public List<Long> bikeList(){
+        List<Long> bikeNumber = new ArrayList<>();
+        bikeNumber.add(111l);
+        bikeNumber.add(112l);
+        bikeNumber.add(113l);
+        return bikeNumber;
     }
 
     public boolean checkTimeClash(CustomerInfo customerInfo, CustomerInfo getCustomer) {

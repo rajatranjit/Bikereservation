@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +57,9 @@ public class BikeBookingService {
             AddAccount addAccount = addAccountRepo.findById(customerInfo.getEmail()).get();
         } catch (Exception e) {
             return new BikeBookingAcknowledgement("Failed, No Account found!!!. Please enter valid email address.", customerInfo.getFare(), customerInfo);
+        }
+        if (!checkerClass.bikeList().contains(bikeNumber)){
+            return new BikeBookingAcknowledgement("Failed, Please enter valid bike number.", customerInfo.getFare(), customerInfo);
         }
         CustomerInfo getOlderBooking = customerInfoRepository.getCustomerByEmail(customerInfo.getEmail());
         System.out.println("getOlderBooking: "+getOlderBooking);

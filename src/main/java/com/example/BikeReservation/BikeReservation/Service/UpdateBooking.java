@@ -6,10 +6,8 @@ import com.example.BikeReservation.BikeReservation.Repository.CustomerInfoReposi
 import com.example.BikeReservation.BikeReservation.Repository.PaymentInfoRepository;
 import com.example.BikeReservation.BikeReservation.Util.BalanceAdjustment;
 import com.example.BikeReservation.BikeReservation.Util.CheckerClass;
-import com.example.BikeReservation.BikeReservation.dto.AddAccountRequest;
 import com.example.BikeReservation.BikeReservation.dto.BikeBookingAcknowledgement;
 import com.example.BikeReservation.BikeReservation.dto.BikeReservationRequest;
-import com.example.BikeReservation.BikeReservation.dto.CustomerAccountAcknowledgement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +37,9 @@ public class UpdateBooking {
         }
         if (checkerClass.checkPickUpAndDropOff(customerInfo)){
             return new BikeBookingAcknowledgement("Sorry!! Pick Up time cannot be before current time.", customerInfo.getFare(), customerInfo);
+        }
+        if (!checkerClass.bikeList().contains(customerInfo.getBikeNumber())){
+            return new BikeBookingAcknowledgement("Failed, Please enter valid bike number.", customerInfo.getFare(), customerInfo);
         }
         String result = balanceAdjustment.reduceFromMerchant(customerInfo.getEmail(),false);
         if (!result.equals("Success")){
