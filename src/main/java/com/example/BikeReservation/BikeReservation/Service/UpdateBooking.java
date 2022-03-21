@@ -45,10 +45,12 @@ public class UpdateBooking {
         if (!result.equals("Success")){
             return new BikeBookingAcknowledgement(result, customerInfo.getFare(), customerInfo);
         }
-        result = balanceAdjustment.addToMerchant(customerInfo.getEmail());
+        result = balanceAdjustment.addToMerchant(customerInfo.getEmail(),customerInfo.getFare());
+
         if (!result.equals("Success")){
             return new BikeBookingAcknowledgement(result, customerInfo.getFare(), customerInfo);
         }
+        customerInfoRepository.save(customerInfo);
         return new BikeBookingAcknowledgement("Success", customerInfo.getFare(), customerInfo);
     }
 }
