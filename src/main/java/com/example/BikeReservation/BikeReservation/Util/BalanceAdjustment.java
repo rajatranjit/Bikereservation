@@ -6,6 +6,7 @@ import com.example.BikeReservation.BikeReservation.Entity.CustomerInfo;
 import com.example.BikeReservation.BikeReservation.Repository.AddAccountRepo;
 import com.example.BikeReservation.BikeReservation.Repository.CustomerBookingDetailRepo;
 import com.example.BikeReservation.BikeReservation.Repository.CustomerInfoRepository;
+import com.example.BikeReservation.BikeReservation.Service.EmailAlertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class BalanceAdjustment {
 
     @Autowired
     CustomerInfoRepository customerInfoRepository;
+
+    @Autowired
+    EmailAlertService emailAlertService;
 
     @Transactional
     public String reduceFromMerchant(String email, boolean refund) {
@@ -46,7 +50,9 @@ public class BalanceAdjustment {
         customerBookingDetail.setEarned(balanceOnMerchant);
         addAccountRepo.save(account);
         customerBookingDetailRepo.save(customerBookingDetail);
+
         if (refund) {
+            emailAlertService.sendNotification(customerInfo,"cancel");
             customerInfoRepository.deleteById(email);
         }
         return "Success";
@@ -54,7 +60,7 @@ public class BalanceAdjustment {
 
 
     @Transactional
-    public String addToMerchant(String email, double balance) {
+    public String addToMerchant(String email, double balance, boolean sendEmail) {
         String result;
         AddAccount account = addAccountRepo.findById(email).get();
         if (account == null){
@@ -87,6 +93,7 @@ public class BalanceAdjustment {
         customerBookingDetail.setEarned(balanceOnMerchant);
         addAccountRepo.save(account);
         customerBookingDetailRepo.save(customerBookingDetail);
+        emailAlertService.sendNotification(customerInfo,"update");
         return "Success";
     }
 }
