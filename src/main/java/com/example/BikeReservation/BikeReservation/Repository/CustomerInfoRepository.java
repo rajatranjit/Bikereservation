@@ -9,11 +9,14 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, Long> {
+public interface CustomerInfoRepository extends JpaRepository<CustomerInfo, String> {
+    @Query(value = "SELECT e FROM CUSTOMER_INFO e WHERE e.email=?1")
+    CustomerInfo getCustomerByEmail(String email);
+
     @Query(value = "SELECT e FROM CUSTOMER_INFO e WHERE e.bikeNumber=?1")
     CustomerInfo getFromBike(long bikeNumber);
-//@Query(value = "SELECT pickupTime FROM CUSTOMER_INFO e where e.pickupTime <= ?1")
-    @Query(value = "SELECT pickupTime FROM CUSTOMER_INFO")
+
+    @Query(value = "SELECT pickupTime FROM CUSTOMER_INFO e where e.pickupTime > ?1")
     List<Date> getStartDate(Date pickupTime);
 
     @Query(value = "SELECT e FROM CUSTOMER_INFO e where e.pickupTime = ?1 and e.bikeNumber= ?2")

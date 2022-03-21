@@ -55,9 +55,6 @@ public class AddAccountService {
         if (fare > account.getBalance()){
             return false;
         }
-        balance -= fare;
-        account.setBalance(balance);
-        addAccountRepo.save(account);
         return true;
     }
 }
