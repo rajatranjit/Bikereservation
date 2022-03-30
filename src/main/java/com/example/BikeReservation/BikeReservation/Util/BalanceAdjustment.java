@@ -38,7 +38,6 @@ public class BalanceAdjustment {
             return result;
         }
         CustomerInfo customerInfo = customerInfoRepository.getCustomerByEmail(email);
-        System.out.println("Customer Info: "+customerInfo);
         if (customerInfo == null){
             result = "Sorry no booking from given Email Address!!!";
             return result;
