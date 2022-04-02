@@ -102,4 +102,12 @@ public class AddAccountService {
         addAccountList = addAccountRepo.findAll();
         return new CustomerAccountAcknowledgementList("Success",addAccountList);
     }
+    public String phoneNumber{
+        String a="\\d{10}";
+        if (phoneNumber.matches(a)) {
+            System.out.println("valid Number");
+        }else {
+            System.out.println("Invalid Number");
+        }
+    }
 }

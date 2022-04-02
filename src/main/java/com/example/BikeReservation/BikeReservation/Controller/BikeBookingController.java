@@ -29,6 +29,7 @@ public class BikeBookingController {
     public BikeBookingAcknowledgement bikeBook(@RequestBody BikeReservationRequest request) throws ParseException {
         return bikeBookingService.bikeBooking(request);
     }
+
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/bikeBookingSystem/addCustomer/")
     public String addAccount(@RequestBody AddAccountRequest addAccountRequest){

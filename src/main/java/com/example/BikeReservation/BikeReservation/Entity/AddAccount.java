@@ -24,4 +24,5 @@ public class AddAccount {
     public String name;
     public boolean isAdmin;
     public String password;
+    public String phoneNumber;
 }
