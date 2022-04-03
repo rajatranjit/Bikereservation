@@ -19,64 +19,69 @@ public class AddAccountService {
     @Autowired
     AddAccountRepo addAccountRepo;
 
-    public String addAccount(AddAccountRequest addAccountRequest){
+    public String addAccount(AddAccountRequest addAccountRequest) {
         AddAccount account = addAccountRequest.getAddAccount();
+        String a = "\\d{10}";
+        if (!account.getPhoneNumber().matches(a)) {
+            return  "Invalid Number";
+        }
         try {
             AddAccount checkAccount = addAccountRepo.findById(account.getEmail()).get();
-            if (checkAccount == null){
+            if (checkAccount == null) {
                 return "Invalid email";
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             addAccountRepo.save(account);
         }
-        try{
-            if (account.isAdmin()){
+        try {
+            if (account.isAdmin()) {
                 return "admin,true";
+            } else {
+                return "admin,false";
             }
-            else {
-                return  "admin,false";
-            }
-        } catch(Exception e){
+        } catch (Exception e) {
             return "Not a valid user";
         }
     }
-    public CustomerAccountAcknowledgement getBalance(String email){
+
+    public CustomerAccountAcknowledgement getBalance(String email) {
         AddAccount account = new AddAccount();
         try {
             account = addAccountRepo.findById(email).get();
-        }catch (Exception e){
-            return new CustomerAccountAcknowledgement("Username not found!!!",account);
+        } catch (Exception e) {
+            return new CustomerAccountAcknowledgement("Username not found!!!", account);
         }
-        return new CustomerAccountAcknowledgement("Success",account);
+        return new CustomerAccountAcknowledgement("Success", account);
     }
 
-    public String getEmail(AddAccountRequest addAccountRequest ){
+    public String getEmail(AddAccountRequest addAccountRequest) {
         AddAccount account = addAccountRequest.getAddAccount();
         try {
             account = addAccountRepo.findById(account.getEmail()).get();
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
         return account.getEmail();
     }
 
-    public CustomerAccountAcknowledgement addBalance(AddAccountRequest addAccountRequest){
+    public CustomerAccountAcknowledgement addBalance(AddAccountRequest addAccountRequest) {
         AddAccount account = addAccountRequest.getAddAccount();
         double balance = account.getBalance();
         try {
             account = addAccountRepo.findById(account.getEmail()).get();
-        } catch (Exception e){
-            return new CustomerAccountAcknowledgement("Failed, Username not found!!!",account);
+        } catch (Exception e) {
+            return new CustomerAccountAcknowledgement("Failed, Username not found!!!", account);
         }
         balance += account.getBalance();
         account.setBalance(balance);
         addAccountRepo.save(account);
-        return new CustomerAccountAcknowledgement("Success",account);
+        return new CustomerAccountAcknowledgement("Success", account);
     }
-    public boolean balanceLimitCheck(String email, double fare){
+
+    public boolean balanceLimitCheck(String email, double fare) {
         AddAccount account = addAccountRepo.findById(email).get();
         double balance = account.getBalance();
-        if (fare > account.getBalance()){
+        if (fare > account.getBalance()) {
             return false;
         }
         return true;
@@ -86,13 +91,13 @@ public class AddAccountService {
         SignIn signIn = signInRequest.getSignIn();
         AddAccount addAccount;
         try {
-            addAccount = addAccountRepo.getSignUp(signIn.getEmail(),signIn.getPassword());
+            addAccount = addAccountRepo.getSignUp(signIn.getEmail(), signIn.getPassword());
             if (addAccount != null) {
                 return "Sign up successful!!!";
             } else {
                 return "Invalid Username and password!!!";
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             return "Invalid Username and password";
         }
     }
@@ -100,14 +105,6 @@ public class AddAccountService {
     public CustomerAccountAcknowledgementList getAllCustomer() {
         List<AddAccount> addAccountList = new ArrayList<>();
         addAccountList = addAccountRepo.findAll();
-        return new CustomerAccountAcknowledgementList("Success",addAccountList);
-    }
-    public String phoneNumber{
-        String a="\\d{10}";
-        if (phoneNumber.matches(a)) {
-            System.out.println("valid Number");
-        }else {
-            System.out.println("Invalid Number");
-        }
+        return new CustomerAccountAcknowledgementList("Success", addAccountList);
     }
 }

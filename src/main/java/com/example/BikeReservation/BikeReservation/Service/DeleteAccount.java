@@ -9,7 +9,11 @@ public class DeleteAccount {
     @Autowired
     AddAccountRepo addAccountRepo;
     public String deleteAccount(String email){
-        addAccountRepo.deleteById(email);
+        try {
+            addAccountRepo.deleteById(email);
+        }catch (Exception e){
+            return "No record found";
+        }
         return "Success";
     }
 }
